@@ -34,4 +34,12 @@ model Post{
   author User @relation(fields: [authorId], references: [userId])
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
+  category Category[]
+}
+
+
+model Category{
+  cateogryId Int @id
+  categoryName String 
+  posts Post[]
 }
