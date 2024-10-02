@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async registerUser(createUserDto: CreateUserDto) {
     console.log(createUserDto);
     const result = await this.prisma.user.create({
       data: createUserDto,
@@ -19,10 +19,21 @@ export class UserService {
     return await this.prisma.user.findMany();
   }
 
-  async findOne(id: string) {
+  async getUserById(id: string) {
     return await this.prisma.user.findFirst({
       where: {
-        userId: id,
+        OR: [{ email: id }, { Profile: { userName: id } }],
+      },
+      select: {
+        email: true,
+        firstName: true,
+        lastName: true,
+        password: true,
+        Profile: {
+          select: {
+            userName: true,
+          },
+        },
       },
     });
   }
