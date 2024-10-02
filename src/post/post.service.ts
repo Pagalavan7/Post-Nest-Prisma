@@ -21,7 +21,11 @@ export class PostService {
   }
 
   async findAll() {
-    return await this.prisma.post.findMany();
+    return await this.prisma.post.findMany({
+      include: {
+        category: true,
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -33,12 +37,33 @@ export class PostService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
+    const { categoryName, categoryId, ...updatepostdata } = updatePostDto;
+    console.log(categoryName, categoryId);
+    let categoryData = undefined;
+
+    if (categoryId) {
+      // Connect to an existing category by ID
+      categoryData = {
+        connect: {
+          id: categoryId,
+        },
+      };
+    } else if (categoryName) {
+      // Either connect to an existing category by name or create a new one
+      categoryData = {
+        connectOrCreate: {
+          where: { categoryName: categoryName },
+          create: { categoryName: categoryName },
+        },
+      };
+    }
     return await this.prisma.post.update({
       where: {
         postId: id,
       },
       data: {
-        ...updatePostDto,
+        ...updatepostdata,
+        category: categoryData,
       },
     });
   }

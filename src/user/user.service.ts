@@ -27,6 +27,27 @@ export class UserService {
     });
   }
 
+  async getMyPosts(id: string) {
+    return this.prisma.user.findMany({
+      where: {
+        userId: id,
+      },
+      select: {
+        userId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        posts: {
+          select: {
+            postId: true,
+            title: true,
+            description: true,
+          },
+        },
+      },
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     return await this.prisma.user.update({
       where: { userId: id },

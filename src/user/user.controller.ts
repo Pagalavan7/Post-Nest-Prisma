@@ -6,11 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { sign } from 'crypto';
+import { UserPostsFilterDTO } from './dto/user-post-filter.dto';
 
 @Controller('user')
 export class UserController {
@@ -18,7 +19,6 @@ export class UserController {
 
   @Post('signup')
   async create(@Body() createUserDto: CreateUserDto) {
-    console.log('User signup success');
     return this.userService.create(createUserDto);
   }
 
@@ -30,6 +30,13 @@ export class UserController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
+  }
+
+  @Get(':id/my-posts')
+  async getMyPosts(@Param('id') userId: string) {
+    {
+      return await this.userService.getMyPosts(userId);
+    }
   }
 
   @Patch(':id')
